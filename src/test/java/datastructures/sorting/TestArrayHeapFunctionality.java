@@ -80,7 +80,7 @@ public class TestArrayHeapFunctionality extends BaseTest {
     public void testInsertBasic() {
     	IPriorityQueue<Integer> heap = this.makeInstance();
     	heap.insert(1);
-    	assertEquals(heap.peekMin(), 1);
+    	assertEquals(1, heap.peekMin());
     }
     
     @Test(timeout=SECOND)

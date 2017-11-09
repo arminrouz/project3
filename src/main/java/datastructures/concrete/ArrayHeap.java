@@ -17,11 +17,17 @@ public class ArrayHeap<T extends Comparable<T>> implements IPriorityQueue<T> {
     // You may NOT rename this field: we will be inspecting it within
     // our private tests.
     private T[] heap;
+    private int height; //keeps track of heap height for array resize.
+    private int size; 
+    int fullSize; 
 
     // Feel free to add more fields and constants.
 
     public ArrayHeap() {
-        throw new NotYetImplementedException();
+    	height = 1; 
+    	heap = makeArrayOfT(5);
+    	size = 0;
+    	fullSize = 5; 
     }
 
     /**
@@ -39,24 +45,74 @@ public class ArrayHeap<T extends Comparable<T>> implements IPriorityQueue<T> {
         // works, and should not modify it in any way.
         return (T[]) (new Comparable[size]);
     }
+    
+    private void resize() {
+    	height++;
+    	T[] newHeap = makeArrayOfT(size + (int) Math.pow(4, height));
+    	fullSize = size + (int) Math.pow(4, height);
+    	for (int i = 0; i < size; i++) {
+    		newHeap[i] = heap[i];
+    	}
+    	heap = newHeap;
+    }
 
     @Override
     public T removeMin() {
-        throw new NotYetImplementedException();
+    	T temp = heap[0];
+    	T lastVal = heap[size - 1];
+    	heap[0] = lastVal; 
+    	heap[size - 1] = temp;
+    	percolateDown(0);
+    	size--;
+        //percolate down after switching last with first
+    	return temp;
+    }
+    private void percolateUp(int index) {
+    	if(heap[index].compareTo(heap[index / 4]) < 0) {
+    		T temp = heap[index];
+    		heap[index] = heap[index / 4];
+    		heap[index / 4] = temp;
+    		percolateUp(index / 4);
+    	}
+    }
+    private void percolateDown(int index) {
+
+    	int smallest = index;
+    	int child;
+    	for(int i = 1; i < 5; i++) {
+    		child = 4 * index + i;
+    		if(child < size && heap[child].compareTo(heap[smallest]) < 0) {
+    			smallest = child;
+    		}
+    	}
+    	if(smallest != index) {
+    		T temp = heap[index];
+    		heap[index] = heap[smallest];
+    		heap[smallest] = temp;
+    		percolateDown(smallest);
+    	}
     }
 
     @Override
     public T peekMin() {
-        throw new NotYetImplementedException();
+    	return heap[0];
     }
 
     @Override
     public void insert(T item) {
-        throw new NotYetImplementedException();
+    	if(size + 1 > fullSize) {
+    		resize();
+    	}
+    	heap[size] = item;
+    	size++; 
+
+    	if(size > 1) {
+    		percolateUp(size - 1);
+    	}
     }
 
     @Override
     public int size() {
-        throw new NotYetImplementedException();
+    	return size;
     }
 }
