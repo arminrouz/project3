@@ -90,7 +90,22 @@ public class TestArrayHeapFunctionality extends BaseTest {
     		heap.insert(i);
     	}
     	for(int i = 1; i <= 20; i++) {
-    		assertEquals(heap.removeMin(), i);
+    		int testVar = heap.removeMin();
+    		System.out.println(testVar);
+    		assertEquals(i, testVar);
+    	}
+    	assertTrue(heap.isEmpty());
+    }
+    
+    @Test(timeout=SECOND)
+    public void testInsertSameValue() {
+    	IPriorityQueue<Integer> heap = this.makeInstance();
+    	for (int i = 0; i < 50; i++) {
+    		heap.insert(1);
+    	}
+    	
+    	for (int i = 0; i < 50; i++) {
+    		assertEquals(1, heap.removeMin());
     	}
     	assertTrue(heap.isEmpty());
     }
