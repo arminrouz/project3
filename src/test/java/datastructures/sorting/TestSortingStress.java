@@ -26,4 +26,17 @@ public class TestSortingStress extends BaseTest {
         	assertEquals(heap.peekMin(), 0);
         }
     }
+    
+    @Test(timeout=15*SECOND)
+    public void testRemoveMinTiming() {
+    	Random rand = new Random();
+    	IPriorityQueue<Integer> heap = this.makeInstance();
+    	for (int i = 0; i < 100000; i++) {
+    		heap.insert(rand.nextInt(1000));
+    	}
+    	
+    	for (int i = 0; i < 100000; i++) {
+    		heap.removeMin();
+    	}
+    }
 }
