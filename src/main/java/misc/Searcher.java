@@ -1,5 +1,7 @@
 package misc;
 
+import java.util.NoSuchElementException;
+
 import datastructures.interfaces.IList;
 import misc.exceptions.NotYetImplementedException;
 
@@ -30,7 +32,9 @@ public class Searcher {
         //
         // - You should implement this method by using your ArrayHeap for the sake of
         //   efficiency.
-
+    	if(input.isEmpty()) {
+    		throw new NoSuchElementException();
+    	}
         throw new NotYetImplementedException();
     }
 }
