@@ -2,6 +2,8 @@ package misc;
 
 import java.util.NoSuchElementException;
 
+import datastructures.concrete.ArrayHeap;
+import datastructures.concrete.DoubleLinkedList;
 import datastructures.interfaces.IList;
 import misc.exceptions.NotYetImplementedException;
 
@@ -35,6 +37,24 @@ public class Searcher {
     	if(input.isEmpty()) {
     		throw new NoSuchElementException();
     	}
-        throw new NotYetImplementedException();
+    	
+    	ArrayHeap<T> heap = new ArrayHeap<T>();
+    	
+    	for(int i = 0; i < k; i++) {
+    		heap.insert(input.get(i));
+    	}
+    	
+    	for(int i = k; i < input.size(); i++) {
+    		T next = input.get(i);
+    		if(next.compareTo(heap.peekMin()) > 0) {
+    			heap.changeTop(next);
+    		}
+    	}
+    	
+    	IList<T> topK = new DoubleLinkedList<T>();
+    	for(int i = 0; i < k; i++) {
+    		topK.add(heap.removeMin());
+    	}
+    	return topK;
     }
 }

@@ -29,6 +29,14 @@ public class ArrayHeap<T extends Comparable<T>> implements IPriorityQueue<T> {
     	size = 0;
     	fullSize = 5; 
     }
+    /*!
+     * !
+     * !
+     * !
+     * WE NEED TO IMPLEMENT FLOYDS METHOD, BUILDING A HEAP TAKES TOO LONG!!!!
+     * 
+     *
+     */
 
     /**
      * This method will return a new, empty array of the given size
@@ -67,6 +75,7 @@ public class ArrayHeap<T extends Comparable<T>> implements IPriorityQueue<T> {
         //percolate down after switching last with first
     	return temp;
     }
+    
     private void percolateUp(int index) {
     	if(heap[index].compareTo(heap[index / 4]) < 0) {
     		T temp = heap[index];
@@ -109,6 +118,11 @@ public class ArrayHeap<T extends Comparable<T>> implements IPriorityQueue<T> {
     	if(size > 1) {
     		percolateUp(size - 1);
     	}
+    }
+    
+    public void changeTop(T item) {
+    	heap[0] = item;
+    	percolateDown(0);
     }
 
     @Override
