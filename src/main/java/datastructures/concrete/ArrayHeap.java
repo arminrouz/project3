@@ -66,7 +66,7 @@ public class ArrayHeap<T extends Comparable<T>> implements IPriorityQueue<T> {
     	}
     	size = heap.length;
     	
-    	for(int i = size / 2; i >= 0; i--) {
+    	for(int i = size / 2 - 1; i >= 0; i--) {
     		percolateDown(i);
     	}
     }
@@ -79,6 +79,7 @@ public class ArrayHeap<T extends Comparable<T>> implements IPriorityQueue<T> {
     		newHeap[i] = heap[i];
     	}
     	heap = newHeap;
+    	System.out.println("heap size: " + fullSize);
     }
 
     @Override

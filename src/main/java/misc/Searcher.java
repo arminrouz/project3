@@ -37,15 +37,16 @@ public class Searcher {
     	if(input.isEmpty()) {
     		throw new NoSuchElementException();
     	}
-    	IList<T> kList = new DoubleLinkedList<T>();
-    	for(int i = 0; i < k; i++) {
-    		kList.add(input.get(i));
-    	}
+    	//IList<T> kList = new DoubleLinkedList<T>();
     	ArrayHeap<T> heap = new ArrayHeap<T>();
-    	heap.buildHeap(kList);
-    	
+
+    	for(int i = 0; i < k; i++) {
+    		heap.insert(input.get(i));
+    	}
+    	//heap.buildHeap(kList);
     	for(int i = k; i < input.size(); i++) {
     		T next = input.get(i);
+    		System.out.println(i); //REMOVE THIS LATER
     		if(next.compareTo(heap.peekMin()) > 0) {
     			heap.changeTop(next);
     		}
@@ -53,6 +54,8 @@ public class Searcher {
     	
     	IList<T> topK = new DoubleLinkedList<T>();
     	for(int i = 0; i < k; i++) {
+    		System.out.print(heap.peekMin() + ", ");
+
     		topK.add(heap.removeMin());
     	}
     	return topK;

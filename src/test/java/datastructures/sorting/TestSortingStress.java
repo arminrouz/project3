@@ -26,25 +26,25 @@ public class TestSortingStress extends BaseTest {
 		IList<Integer> input = new DoubleLinkedList<Integer>();
 		List<Integer> inputList = new LinkedList<Integer>();
 		
-		long start1 = System.nanoTime();
 		Integer nextRandom;
-		for(int i = 0; i < 100000; i++) {
+		for(int i = 0; i < 10000; i++) {
 			nextRandom = rand.nextInt(1000);
 			inputList.add(nextRandom);
 			input.add(nextRandom); //create input to sort
 		}
-		long end1 = System. nanoTime();
-		System.out.println("making lists = " + (end1 - start1) / 1000000);		
 		
 		long start2 = System.nanoTime();
-		IList<Integer> sortedInput = Searcher.topKSort(100000, input); //our sort method
+		IList<Integer> sortedInput = Searcher.topKSort(10000, input); //our sort method
 		long end2 = System.nanoTime();
 		System.out.println("topKSort time = " + (end2 - start2) / 1000000);
 		
 		Collections.sort(inputList); //sorted LinkedList
-		
-		for(int i = 0; i < 100000; i++) {
-			System.out.println(i);
+		System.out.println(inputList);
+		for(int i = 0; i < 10000; i++) {
+//			System.out.println("index = " + i);
+//			System.out.println("ours: " + sortedInput.get(i) + ", theirs: " + inputList.get(i));
+//			System.out.println("ours: " + sortedInput.get(i + 1) + ", theirs: " + inputList.get(i + 1));
+
 			assertEquals(sortedInput.get(i), inputList.get(i));
 		}
 //		for(int i = 0; i < 100000; i++) {
