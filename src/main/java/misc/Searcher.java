@@ -37,12 +37,12 @@ public class Searcher {
     	if(input.isEmpty()) {
     		throw new NoSuchElementException();
     	}
-    	
-    	ArrayHeap<T> heap = new ArrayHeap<T>();
-    	
+    	IList<T> kList = new DoubleLinkedList<T>();
     	for(int i = 0; i < k; i++) {
-    		heap.insert(input.get(i));
+    		kList.add(input.get(i));
     	}
+    	ArrayHeap<T> heap = new ArrayHeap<T>();
+    	heap.buildHeap(kList);
     	
     	for(int i = k; i < input.size(); i++) {
     		T next = input.get(i);

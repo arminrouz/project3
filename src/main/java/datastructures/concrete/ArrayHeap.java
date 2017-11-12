@@ -1,5 +1,6 @@
 package datastructures.concrete;
 
+import datastructures.interfaces.IList;
 import datastructures.interfaces.IPriorityQueue;
 import misc.exceptions.EmptyContainerException;
 import misc.exceptions.NotYetImplementedException;
@@ -52,6 +53,22 @@ public class ArrayHeap<T extends Comparable<T>> implements IPriorityQueue<T> {
         // As before, you do not need to understand how this method
         // works, and should not modify it in any way.
         return (T[]) (new Comparable[size]);
+    }
+    
+    public void buildHeap(IList<T> input) {
+    	
+    	for(int i = 0; i < input.size(); i++) {
+    		if(size + 1 > fullSize) {
+        		resize();
+        	}
+    		heap[i] = input.get(i);
+    		size++;
+    	}
+    	size = heap.length;
+    	
+    	for(int i = size / 2; i >= 0; i--) {
+    		percolateDown(i);
+    	}
     }
     
     private void resize() {
