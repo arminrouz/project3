@@ -95,11 +95,11 @@ public class ArrayHeap<T extends Comparable<T>> implements IPriorityQueue<T> {
     }
     
     private void percolateUp(int index) {
-    	if(heap[index].compareTo(heap[index / 4]) < 0) {
+    	if(heap[index].compareTo(heap[(index - 1) / 4]) < 0) {
     		T temp = heap[index];
-    		heap[index] = heap[index / 4];
-    		heap[index / 4] = temp;
-    		percolateUp(index / 4);
+    		heap[index] = heap[(index - 1) / 4];
+    		heap[(index - 1) / 4] = temp;
+    		percolateUp((index - 1) / 4);
     	}
     }
     private void percolateDown(int index) {
@@ -138,10 +138,10 @@ public class ArrayHeap<T extends Comparable<T>> implements IPriorityQueue<T> {
     	}
     }
     
-    public void changeTop(T item) {
-    	heap[0] = item;
-    	percolateDown(0);
-    }
+//    public void changeTop(T item) {
+//    	heap[0] = item;
+//    	percolateDown(0);
+//    }
 
     @Override
     public int size() {

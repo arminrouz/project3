@@ -48,13 +48,15 @@ public class Searcher {
     		T next = input.get(i);
     		System.out.println(i); //REMOVE THIS LATER
     		if(next.compareTo(heap.peekMin()) > 0) {
-    			heap.changeTop(next);
+    			T temp = heap.removeMin();
+    			heap.insert(next);
+   
     		}
     	}
     	
     	IList<T> topK = new DoubleLinkedList<T>();
     	for(int i = 0; i < k; i++) {
-    		System.out.print(heap.peekMin() + ", ");
+//    		System.out.print(heap.peekMin() + ", ");
 
     		topK.add(heap.removeMin());
     	}
