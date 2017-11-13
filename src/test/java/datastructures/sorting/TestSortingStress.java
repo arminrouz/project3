@@ -29,7 +29,9 @@ public class TestSortingStress extends BaseTest {
 		Integer nextRandom;
 		for(int i = 0; i < 100000; i++) {
 			nextRandom = rand.nextInt(1000);
-			inputList.add(nextRandom);
+//			if(i < 10000) {
+				inputList.add(nextRandom);
+//			}
 			input.add(nextRandom); //create input to sort
 		}
 		
@@ -39,22 +41,9 @@ public class TestSortingStress extends BaseTest {
 		System.out.println("topKSort time = " + (end2 - start2) / 1000000);
 		
 		Collections.sort(inputList); //sorted LinkedList
-//		System.out.println(inputList);
 		for(int i = 0; i < 100000; i++) {
-//			System.out.println("index = " + i);
-//			System.out.println("ours: " + sortedInput.get(i) + ", theirs: " + inputList.get(i));
-//			System.out.println("ours: " + sortedInput.get(i + 1) + ", theirs: " + inputList.get(i + 1));
-			
 			assertEquals(sortedInput.get(i), inputList.get(i));
 		}
-//		for(int i = 0; i < 100000; i++) {
-//			sortedInputArray[i] = inputList.get(i); 
-//			//copy sorted LinkedList into array so that we can use assertListMatches, 
-//			//which takes an array and an IList
-//		}
-//		assertListMatches(sortedInputArray, sortedInput);
-		//assert that newly made array matches the sorted input 
-		//(which was sorted using our topK method)
 	}
 	
     @Test(timeout=10*SECOND)

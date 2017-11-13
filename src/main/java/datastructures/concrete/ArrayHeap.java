@@ -66,7 +66,7 @@ public class ArrayHeap<T extends Comparable<T>> implements IPriorityQueue<T> {
     	}
     	size = heap.length;
     	
-    	for(int i = size / 2 - 1; i >= 0; i--) {
+    	for(int i = (size - 2) / 4; i >= 0; i--) { // FLOYDS METHOD
     		percolateDown(i);
     	}
     }
@@ -79,7 +79,6 @@ public class ArrayHeap<T extends Comparable<T>> implements IPriorityQueue<T> {
     		newHeap[i] = heap[i];
     	}
     	heap = newHeap;
-    	System.out.println("heap size: " + fullSize);
     }
 
     @Override
@@ -87,7 +86,6 @@ public class ArrayHeap<T extends Comparable<T>> implements IPriorityQueue<T> {
     	T temp = heap[0];
     	T lastVal = heap[size - 1];
     	heap[0] = lastVal; 
-    	//heap[size - 1] = temp;
     	percolateDown(0);
     	size--;
         //percolate down after switching last with first
@@ -102,8 +100,8 @@ public class ArrayHeap<T extends Comparable<T>> implements IPriorityQueue<T> {
     		percolateUp((index - 1) / 4);
     	}
     }
+    
     private void percolateDown(int index) {
-
     	int smallest = index;
     	int child;
     	for(int i = 1; i < 5; i++) {
@@ -138,11 +136,6 @@ public class ArrayHeap<T extends Comparable<T>> implements IPriorityQueue<T> {
     	}
     }
     
-//    public void changeTop(T item) {
-//    	heap[0] = item;
-//    	percolateDown(0);
-//    }
-
     @Override
     public int size() {
     	return size;
