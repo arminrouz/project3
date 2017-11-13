@@ -86,8 +86,9 @@ public class ArrayHeap<T extends Comparable<T>> implements IPriorityQueue<T> {
     	T temp = heap[0];
     	T lastVal = heap[size - 1];
     	heap[0] = lastVal; 
-    	percolateDown(0);
     	size--;
+
+    	percolateDown(0);
         //percolate down after switching last with first
     	return temp;
     }
