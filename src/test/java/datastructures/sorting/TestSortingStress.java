@@ -35,10 +35,7 @@ public class TestSortingStress extends BaseTest {
 			input.add(nextRandom); //create input to sort
 		}
 		
-		long start2 = System.nanoTime();
 		IList<Integer> sortedInput = Searcher.topKSort(10000, input); //our sort method
-		long end2 = System.nanoTime();
-		System.out.println("topKSort time = " + (end2 - start2) / 1000000);
 		
 		Collections.sort(inputList); //sorted LinkedList
 		for(int i = 0; i < 10000; i++) {

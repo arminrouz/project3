@@ -18,14 +18,14 @@ public class ArrayHeap<T extends Comparable<T>> implements IPriorityQueue<T> {
     // You may NOT rename this field: we will be inspecting it within
     // our private tests.
     private T[] heap;
-    private int height; //keeps track of heap height for array resize.
+//    private int height; //keeps track of heap height for array resize.
     private int size; 
     int fullSize; 
 
     // Feel free to add more fields and constants.
 
     public ArrayHeap() {
-    	height = 1; 
+//    	height = 1; 
     	heap = makeArrayOfT(5);
     	size = 0;
     	fullSize = 5; 
@@ -55,26 +55,28 @@ public class ArrayHeap<T extends Comparable<T>> implements IPriorityQueue<T> {
         return (T[]) (new Comparable[size]);
     }
     
-    public void buildHeap(IList<T> input) {
-    	
-    	for(int i = 0; i < input.size(); i++) {
-    		if(size + 1 > fullSize) {
-        		resize();
-        	}
-    		heap[i] = input.get(i);
-    		size++;
-    	}
-    	size = heap.length;
-    	
-    	for(int i = (size - 2) / 4; i >= 0; i--) { // FLOYDS METHOD
-    		percolateDown(i);
-    	}
-    }
-    
+//    public void buildHeap(IList<T> input) {
+//    	
+//    	for(int i = 0; i < input.size(); i++) {
+//    		if(size + 1 > fullSize) {
+//        		resize();
+//        	}
+//    		heap[i] = input.get(i);
+//    		size++;
+//    	}
+//    	size = heap.length;
+//    	
+//    	for(int i = (size - 2) / 4; i >= 0; i--) { // FLOYDS METHOD
+//    		percolateDown(i);
+//    	}
+//    }
+//    
     private void resize() {
-    	height++;
-    	T[] newHeap = makeArrayOfT(size + (int) Math.pow(4, height));
-    	fullSize = size + (int) Math.pow(4, height);
+//    	height++;
+//    	T[] newHeap = makeArrayOfT(size + (int) Math.pow(4, height));
+//    	fullSize = size + (int) Math.pow(4, height);
+    	T[] newHeap = makeArrayOfT(size * 2);
+    	fullSize = newHeap.length;
     	for (int i = 0; i < size; i++) {
     		newHeap[i] = heap[i];
     	}
@@ -86,6 +88,7 @@ public class ArrayHeap<T extends Comparable<T>> implements IPriorityQueue<T> {
     	T temp = heap[0];
     	T lastVal = heap[size - 1];
     	heap[0] = lastVal; 
+    	heap[size - 1] = null;
     	size--;
 
     	percolateDown(0);
@@ -106,7 +109,7 @@ public class ArrayHeap<T extends Comparable<T>> implements IPriorityQueue<T> {
     	int smallest = index;
     	int child;
     	for(int i = 1; i < 5; i++) {
-    		child = 4 * index + i;
+    		child = (4 * index) + i;
     		if(child < size && heap[child].compareTo(heap[smallest]) < 0) {
     			smallest = child;
     		}

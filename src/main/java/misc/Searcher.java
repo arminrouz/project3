@@ -37,11 +37,19 @@ public class Searcher {
     	if(input.isEmpty()) {
     		throw new NoSuchElementException();
     	}
-    	ArrayHeap<T> heap = new ArrayHeap<T>();    	
+    	ArrayHeap<T> heap = new ArrayHeap<T>();  
+    	
+		long start1 = System.nanoTime();
+
     	for(int i = 0; i < k; i++) {
     		heap.insert(input.get(i));
     	}
+    	long end1 = System.nanoTime();
+		System.out.println("build heap of k time = " + (end1 - start1) / 1000000);
     	
+    	
+		long start2 = System.nanoTime();
+
     	for(int i = k; i < input.size(); i++) {
     		T next = input.get(i);
     		if(next.compareTo(heap.peekMin()) > 0) {
@@ -49,7 +57,9 @@ public class Searcher {
     			heap.insert(next);
     		}
     	}
-    	
+		long end2 = System.nanoTime();
+		System.out.println("iterate thru rest of k to n time = " + (end2 - start2) / 1000000);
+
     	IList<T> topK = new DoubleLinkedList<T>();
     	for(int i = 0; i < k; i++) {
     		topK.add(heap.removeMin());
