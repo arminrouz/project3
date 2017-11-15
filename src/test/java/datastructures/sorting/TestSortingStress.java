@@ -20,7 +20,7 @@ public class TestSortingStress extends BaseTest {
 	}
 	
 	
-	@Test(timeout=30*SECOND)
+	@Test(timeout=10*SECOND)
 //	public void testSortStress() {
 //		Random rand = new Random();
 //		IList<Integer> test1 = new DoubleLinkedList<Integer>();
