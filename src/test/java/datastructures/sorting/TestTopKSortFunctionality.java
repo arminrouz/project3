@@ -45,7 +45,6 @@ public class TestTopKSortFunctionality extends BaseTest {
     	assertListMatches(arr, top);
     }
     
-    //MAYBE USE THIS FOR STRESS TEST
     protected <T> void assertListMatches(T[] expected, IList<T> actual) {
         assertEquals(expected.length, actual.size());
         assertEquals(expected.length == 0, actual.isEmpty());
