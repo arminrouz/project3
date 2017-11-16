@@ -86,10 +86,10 @@ public class TestArrayHeapFunctionality extends BaseTest {
     @Test(timeout=SECOND)
     public void testInsertWithChildren() {
     	IPriorityQueue<Integer> heap = this.makeInstance();
-    	for(int i = 1; i<= 20; i++) {
+    	for (int i = 1; i<= 20; i++) {
     		heap.insert(i);
     	}
-    	for(int i = 1; i <= 20; i++) {
+    	for (int i = 1; i <= 20; i++) {
     		int testVar = heap.removeMin();
     		System.out.println(testVar);
     		assertEquals(i, testVar);

@@ -26,8 +26,8 @@ public class TestSortingStress extends BaseTest {
 		IList<Integer> input = new DoubleLinkedList<Integer>();
 		List<Integer> inputList = new LinkedList<Integer>();
 		
-		Integer nextRandom;
-		for(int i = 0; i < 1000000; i++) {
+		int nextRandom;
+		for (int i = 0; i < 1000000; i++) {
 			nextRandom = rand.nextInt(1000);
 			inputList.add(nextRandom);
 			input.add(nextRandom); //create input to sort
@@ -39,17 +39,17 @@ public class TestSortingStress extends BaseTest {
 		
 		List<Integer> sortedKList = new LinkedList<Integer>();
 		Iterator<Integer> listIter = inputList.iterator();
-		for(int i = 0; i < 900000; i++) {
+		for (int i = 0; i < 900000; i++) {
 			listIter.next();
 		}
 		
-		for(int i = 0; i < 100000; i++) {
+		for (int i = 0; i < 100000; i++) {
 			sortedKList.add(listIter.next());
 		}
 		Iterator<Integer> sortedListIter = sortedKList.iterator();
 		Iterator<Integer> myListIter = mySortedK.iterator();
 		
-		for(int i = 0; i < 100000; i++) {
+		for (int i = 0; i < 100000; i++) {
 			assertEquals(sortedListIter.next(), myListIter.next());
 		}
 		

@@ -23,37 +23,35 @@ public class Searcher {
      * @throws IllegalArgumentException  if k < 0
      */
     public static <T extends Comparable<T>> IList<T> topKSort(int k, IList<T> input) {
-        // Implementation notes:
-        //
-        // - This static method is a _generic method_. A generic method is similar to
-        //   the generic methods we covered in class, except that the generic parameter
-        //   is used only within this method.
-        //
-        //   You can implement a generic method in basically the same way you implement
-        //   generic classes: just use the 'T' generic type as if it were a regular type.
-        //
-        // - You should implement this method by using your ArrayHeap for the sake of
-        //   efficiency.
-    	if(input.isEmpty()) {
+        
+    	IList<T> topK = new DoubleLinkedList<T>();
+    	if (input.isEmpty()) {
     		throw new NoSuchElementException();
     	}
-    	ArrayHeap<T> heap = new ArrayHeap<T>();
     	
+    	if (k == 0) {
+    		return topK;
+    	}
+    	
+    	if (k < 0 || k > input.size()) {
+    		throw new IllegalArgumentException();
+    	}
+    	
+    	ArrayHeap<T> heap = new ArrayHeap<T>();
 		int counter = 0; 
 		for (T value : input) {
-			if(counter < k) {
+			if (counter < k) {
 				heap.insert(value);
 			} else {
-				if(value.compareTo(heap.peekMin()) > 0) {
+				if (value.compareTo(heap.peekMin()) > 0) {
 	    			heap.removeMin();
 	    			heap.insert(value);
 	    		}
 			}
 			counter++;
 		}
-		
-    	IList<T> topK = new DoubleLinkedList<T>();
-    	for(int i = 0; i < k; i++) {
+  
+    	for (int i = 0; i < k; i++) {
     		topK.add(heap.removeMin());
     	}
     	return topK;

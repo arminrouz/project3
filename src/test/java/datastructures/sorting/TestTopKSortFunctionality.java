@@ -45,6 +45,40 @@ public class TestTopKSortFunctionality extends BaseTest {
     	assertListMatches(arr, top);
     }
     
+    @Test(timeout=SECOND)
+    public void testZeroK() {
+    	Random rand = new Random();
+    	IList<Integer> list = new DoubleLinkedList<>();
+    	for (int i = 0; i < 1000; i++) {
+    		int val = rand.nextInt(1000);
+    		list.add(val);
+    	}
+    	IList<Integer> top = Searcher.topKSort(0, list);
+    	assertEquals(0, top.size());
+    }
+    
+    @Test(expected=IllegalArgumentException.class)
+    public void testNegativeK() {
+    	IList<Integer> list = new DoubleLinkedList<>();
+    	Random rand = new Random(); 
+    	for (int i = 0; i < 1000; i++) {
+    		int val = rand.nextInt(1000);
+    		list.add(val);
+    	}
+    	IList<Integer> test = Searcher.topKSort(-1, list);
+    }
+    
+    @Test(expected=IllegalArgumentException.class)
+    public void testInvalidK() {
+    	IList<Integer> list = new DoubleLinkedList<>();
+    	Random rand = new Random(); 
+    	for (int i = 0; i < 1000; i++) {
+    		int val = rand.nextInt(1000);
+    		list.add(val);
+    	}
+    	IList<Integer> test = Searcher.topKSort(list.size() + 1, list);
+    }
+    
     protected <T> void assertListMatches(T[] expected, IList<T> actual) {
         assertEquals(expected.length, actual.size());
         assertEquals(expected.length == 0, actual.isEmpty());

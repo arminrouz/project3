@@ -18,26 +18,17 @@ public class ArrayHeap<T extends Comparable<T>> implements IPriorityQueue<T> {
     // You may NOT rename this field: we will be inspecting it within
     // our private tests.
     private T[] heap;
-//    private int height; //keeps track of heap height for array resize.
     private int size; 
     int fullSize; 
 
     // Feel free to add more fields and constants.
 
     public ArrayHeap() {
-//    	height = 1; 
     	heap = makeArrayOfT(5);
     	size = 0;
     	fullSize = 5; 
     }
-    /*!
-     * !
-     * !
-     * !
-     * WE NEED TO IMPLEMENT FLOYDS METHOD, BUILDING A HEAP TAKES TOO LONG!!!!
-     * 
-     *
-     */
+
 
     /**
      * This method will return a new, empty array of the given size
@@ -55,26 +46,10 @@ public class ArrayHeap<T extends Comparable<T>> implements IPriorityQueue<T> {
         return (T[]) (new Comparable[size]);
     }
     
-//    public void buildHeap(IList<T> input) {
-//    	
-//    	for(int i = 0; i < input.size(); i++) {
-//    		if(size + 1 > fullSize) {
-//        		resize();
-//        	}
-//    		heap[i] = input.get(i);
-//    		size++;
-//    	}
-//    	size = heap.length;
-//    	
-//    	for(int i = (size - 2) / 4; i >= 0; i--) { // FLOYDS METHOD
-//    		percolateDown(i);
-//    	}
-//    }
-//    
+
     private void resize() {
 //    	height++;
 //    	T[] newHeap = makeArrayOfT(size + (int) Math.pow(4, height));
-//    	fullSize = size + (int) Math.pow(4, height);
     	T[] newHeap = makeArrayOfT(size * 2);
     	fullSize = newHeap.length;
     	for (int i = 0; i < size; i++) {
@@ -92,12 +67,11 @@ public class ArrayHeap<T extends Comparable<T>> implements IPriorityQueue<T> {
     	size--;
 
     	percolateDown(0);
-        //percolate down after switching last with first
     	return temp;
     }
     
     private void percolateUp(int index) {
-    	if(heap[index].compareTo(heap[(index - 1) / 4]) < 0) {
+    	if (heap[index].compareTo(heap[(index - 1) / 4]) < 0) {
     		T temp = heap[index];
     		heap[index] = heap[(index - 1) / 4];
     		heap[(index - 1) / 4] = temp;
@@ -108,13 +82,13 @@ public class ArrayHeap<T extends Comparable<T>> implements IPriorityQueue<T> {
     private void percolateDown(int index) {
     	int smallest = index;
     	int child;
-    	for(int i = 1; i < 5; i++) {
+    	for (int i = 1; i < 5; i++) {
     		child = (4 * index) + i;
-    		if(child < size && heap[child].compareTo(heap[smallest]) < 0) {
+    		if (child < size && heap[child].compareTo(heap[smallest]) < 0) {
     			smallest = child;
     		}
     	}
-    	if(smallest != index) {
+    	if (smallest != index) {
     		T temp = heap[index];
     		heap[index] = heap[smallest];
     		heap[smallest] = temp;
@@ -129,13 +103,13 @@ public class ArrayHeap<T extends Comparable<T>> implements IPriorityQueue<T> {
 
     @Override
     public void insert(T item) {
-    	if(size + 1 > fullSize) {
+    	if (size + 1 > fullSize) {
     		resize();
     	}
     	heap[size] = item;
     	size++; 
 
-    	if(size > 1) {
+    	if (size > 1) {
     		percolateUp(size - 1);
     	}
     }
