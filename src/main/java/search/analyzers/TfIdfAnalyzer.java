@@ -1,5 +1,7 @@
 package search.analyzers;
 
+import datastructures.concrete.KVPair;
+import datastructures.concrete.dictionaries.ArrayDictionary;
 import datastructures.interfaces.IDictionary;
 import datastructures.interfaces.IList;
 import datastructures.interfaces.ISet;
@@ -35,8 +37,8 @@ public class TfIdfAnalyzer {
         // You should uncomment these lines when you're ready to begin working
         // on this class.
 
-        //this.idfScores = this.computeIdfScores(webpages);
-        //this.documentTfIdfVectors = this.computeAllDocumentTfIdfVectors(webpages);
+        this.idfScores = this.computeIdfScores(webpages);
+        this.documentTfIdfVectors = this.computeAllDocumentTfIdfVectors(webpages);
     }
 
     // Note: this method, strictly speaking, doesn't need to exist. However,
@@ -57,7 +59,22 @@ public class TfIdfAnalyzer {
      * in any documents to their IDF score.
      */
     private IDictionary<String, Double> computeIdfScores(ISet<Webpage> pages) {
-        throw new NotYetImplementedException();
+    	int numDocs = pages.size();
+    	IDictionary<String, Double> idfScores = new ArrayDictionary<String, Double>();
+    	for(Webpage page : pages) {
+    		for (String word : page.getWords()) {
+    			
+	    		if(countWord(word, page.getWords()) > 0) {
+	    			idfScores.put(word, idfScores.get(word) + 1);
+	    		}
+    		}
+    	}
+
+    	for(KVPair<String, Double> pair : idfScores) {
+    		idfScores.put(pair.getKey(), Math.log((double) numDocs / pair.getValue()));
+    	}
+    	
+    	return idfScores;
     }
 
     /**
@@ -67,9 +84,22 @@ public class TfIdfAnalyzer {
      * We are treating the list of words as if it were a document.
      */
     private IDictionary<String, Double> computeTfScores(IList<String> words) {
-        throw new NotYetImplementedException();
+        IDictionary<String, Double> tfScores = new ArrayDictionary<String, Double>();
+        for(String word : words) {
+        	tfScores.put(word, countWord(word, words) / words.size());
+        }
+        return tfScores;
     }
 
+    private Double countWord(String target, IList<String> words) {
+    	Double counter = 0.0;
+    	for(String word : words) {
+    		if(word.equals(target)) {
+    			counter++;
+    		}
+    	}
+    	return counter;
+    }
     /**
      * See spec for more details on what this method should do.
      */
