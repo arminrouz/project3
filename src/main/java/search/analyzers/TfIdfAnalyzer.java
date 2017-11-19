@@ -106,7 +106,14 @@ public class TfIdfAnalyzer {
     private IDictionary<URI, IDictionary<String, Double>> computeAllDocumentTfIdfVectors(ISet<Webpage> pages) {
         // Hint: this method should use the idfScores field and
         // call the computeTfScores(...) method.
-        throw new NotYetImplementedException();
+    	IDictionary<URI, IDictionary<String, Double>> finalVector = new ArrayDictionary<URI, IDictionary<String, Double>>();
+    	for (Webpage page : pages) {
+    		IList<String> list = page.getWords();
+    		IDictionary<String, Double> scores = computeTfScores(list);
+    		finalVector.put(page.getUri(), scores);
+    		
+    	}
+        return finalVector;
     }
 
     /**
