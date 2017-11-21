@@ -102,32 +102,56 @@ public class TfIdfAnalyzer {
      * We are treating the list of words as if it were a document.
      */
     private IDictionary<String, Double> computeTfScores(IList<String> words) {
+    	//System.out.println("TFStart");
+    	//TIMER.start();
         IDictionary<String, Double> tfScores = new ChainedHashDictionary<String, Double>();
-        for(String word : words) {
-        	tfScores.put(word, countWord(word, words) / (double) words.size());
+        IDictionary<String, Integer> uniqueWords = new ChainedHashDictionary<String, Integer>();
+        for (String word : words) {
+        	if(!uniqueWords.containsKey(word)) {
+        		uniqueWords.put(word, 1);
+        	} else {
+        		uniqueWords.put(word, uniqueWords.get(word) + 1);
+        	}
+        	// at this point, increment a counter
+        	// make sure you consider edge case of first time encountering word
+        	// this in turn removes O(n^2) runtime and reduces memory
         }
+        System.out.print("TF Start:");
+        TIMER.start();
+        for(KVPair<String, Integer> pair : uniqueWords) {
+        	//System.out.println("Loop Start look ");
+        	//IMER.start();
+        	tfScores.put(pair.getKey(), pair.getValue() / (double) words.size());
+        	//System.out.println("Stop: " + TIMER.stop());
+        }
+        TIMER.stop();
+        //System.out.println("TFSTOP: " + TIMER.stop());
         return tfScores;
     }
 
-    private Double countWord(String target, IList<String> words) {
-    	Double counter = 0.0;
-    	for(String word : words) {
-    		if(word.equalsIgnoreCase(target)) {
-    			counter++;
-    		}
-    	}
-    	return counter;
-    }
+//    private Double countWord(String target, IList<String> words) {
+//    	Double counter = 0.0;
+//    	for(String word : words) {
+//    		if(word.equalsIgnoreCase(target)) {
+//    			counter++;
+//    		}
+//    	}
+//    	return counter;
+//    }
     /**
      * See spec for more details on what this method should do.
      */
     private IDictionary<URI, IDictionary<String, Double>> computeAllDocumentTfIdfVectors(ISet<Webpage> pages) {
         // Hint: this method should use the idfScores field and
-        // call the computeTfScores(...) method.
+        // call the computeTfScores(...) method
+    	//System.out.println("Start compute all time");
     	IDictionary<URI, IDictionary<String, Double>> finalVector = new ChainedHashDictionary<URI, IDictionary<String, Double>>();
     	for (Webpage page : pages) {
     		IList<String> list = page.getWords();
+    		//System.out.println("start time: ");
+    		//TIMER.start();
     		IDictionary<String, Double> scores = computeTfScores(list);
+    		//System.out.println(TIMER.stop());
     		for(KVPair<String, Double> pair : scores) {
     			String key = pair.getKey();
         		scores.put(key, pair.getValue() * idfScores.get(key));
@@ -135,6 +159,7 @@ public class TfIdfAnalyzer {
     		finalVector.put(page.getUri(), scores);
     		
     	}
+    	//System.out.println("End document time" + TIMER.stop());
         return finalVector;
     }
 
