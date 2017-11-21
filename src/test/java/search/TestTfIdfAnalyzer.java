@@ -3,7 +3,6 @@ package search;
 import datastructures.concrete.ChainedHashSet;
 import datastructures.concrete.DoubleLinkedList;
 import datastructures.concrete.KVPair;
-import datastructures.concrete.dictionaries.ArrayDictionary;
 import datastructures.concrete.dictionaries.ChainedHashDictionary;
 import datastructures.interfaces.IDictionary;
 import datastructures.interfaces.IList;

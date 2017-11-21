@@ -2,12 +2,10 @@ package search.analyzers;
 
 import datastructures.concrete.ChainedHashSet;
 import datastructures.concrete.KVPair;
-import datastructures.concrete.dictionaries.ArrayDictionary;
 import datastructures.concrete.dictionaries.ChainedHashDictionary;
 import datastructures.interfaces.IDictionary;
 import datastructures.interfaces.IList;
 import datastructures.interfaces.ISet;
-import misc.exceptions.NotYetImplementedException;
 import search.models.Webpage;
 
 import java.net.URI;
@@ -67,8 +65,8 @@ public class TfIdfAnalyzer {
      * in any documents to their IDF score.
      */
     private IDictionary<String, Double> computeIdfScores(ISet<Webpage> pages) {
-    	System.out.println("start compute IDF");
-    	TIMER.start();
+//    	System.out.println("start compute IDF");
+//    	TIMER.start();
     	int numDocs = pages.size();
     	IDictionary<String, Double> idfScores = new ChainedHashDictionary<String, Double>();
     	for(Webpage page : pages) {
@@ -91,7 +89,7 @@ public class TfIdfAnalyzer {
     	for(KVPair<String, Double> pair : idfScores) {
     		idfScores.put(pair.getKey(), Math.log((double) numDocs / pair.getValue()));
     	}
-    	System.out.println("compute IDF time = " + TIMER.stop());
+//    	System.out.println("compute IDF time = " + TIMER.stop());
 
     	return idfScores;
     }
@@ -115,17 +113,16 @@ public class TfIdfAnalyzer {
         	}
         	// at this point, increment a counter
         	// make sure you consider edge case of first time encountering word
-        	// this in turn removes O(n^2) runtime and reduces memory
         }
-        System.out.print("TF Start:");
-        TIMER.start();
+//        System.out.print("TF Start:");
+//        TIMER.start();
         for(KVPair<String, Integer> pair : uniqueWords) {
         	//System.out.println("Loop Start look ");
         	//IMER.start();
         	tfScores.put(pair.getKey(), pair.getValue() / (double) words.size());
         	//System.out.println("Stop: " + TIMER.stop());
         }
-        TIMER.stop();
+//        TIMER.stop();
         //System.out.println("TFSTOP: " + TIMER.stop());
         return tfScores;
     }
