@@ -52,6 +52,7 @@ public class TfIdfAnalyzer {
     // we've included it so we can add some unit tests to help verify that your
     // constructor correctly initializes your fields.
     public IDictionary<URI, IDictionary<String, Double>> getDocumentTfIdfVectors() {
+    
         return this.documentTfIdfVectors;
     }
 
@@ -129,15 +130,6 @@ public class TfIdfAnalyzer {
         return tfScores;
     }
 
-//    private Double countWord(String target, IList<String> words) {
-//    	Double counter = 0.0;
-//    	for(String word : words) {
-//    		if(word.equalsIgnoreCase(target)) {
-//    			counter++;
-//    		}
-//    	}
-//    	return counter;
-//    }
     /**
      * See spec for more details on what this method should do.
      */
