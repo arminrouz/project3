@@ -1,7 +1,9 @@
 package search.analyzers;
 
+import datastructures.concrete.ChainedHashSet;
 import datastructures.concrete.KVPair;
 import datastructures.concrete.dictionaries.ArrayDictionary;
+import datastructures.concrete.dictionaries.ChainedHashDictionary;
 import datastructures.interfaces.IDictionary;
 import datastructures.interfaces.IList;
 import datastructures.interfaces.ISet;
@@ -60,13 +62,21 @@ public class TfIdfAnalyzer {
      */
     private IDictionary<String, Double> computeIdfScores(ISet<Webpage> pages) {
     	int numDocs = pages.size();
-    	IDictionary<String, Double> idfScores = new ArrayDictionary<String, Double>();
+    	IDictionary<String, Double> idfScores = new ChainedHashDictionary<String, Double>();
     	for(Webpage page : pages) {
-    		for (String word : page.getWords()) {
+    		ISet<String> uniqueWords = new ChainedHashSet<String>();
+    		for(String word : page.getWords()) {
+    			uniqueWords.add(word);
+    		}
+    		for (String word : uniqueWords) {
     			
-	    		if(countWord(word, page.getWords()) > 0) {
-	    			idfScores.put(word, idfScores.get(word) + 1);
-	    		}
+	    		
+    			if(!idfScores.containsKey(word)) {
+    				idfScores.put(word,  0.0);
+    			}
+    			double oldScore = idfScores.get(word);
+    			idfScores.put(word, oldScore + 1.0);
+	    		
     		}
     	}
 
@@ -84,9 +94,9 @@ public class TfIdfAnalyzer {
      * We are treating the list of words as if it were a document.
      */
     private IDictionary<String, Double> computeTfScores(IList<String> words) {
-        IDictionary<String, Double> tfScores = new ArrayDictionary<String, Double>();
+        IDictionary<String, Double> tfScores = new ChainedHashDictionary<String, Double>();
         for(String word : words) {
-        	tfScores.put(word, countWord(word, words) / words.size());
+        	tfScores.put(word, countWord(word, words) / (double) words.size());
         }
         return tfScores;
     }
@@ -94,7 +104,7 @@ public class TfIdfAnalyzer {
     private Double countWord(String target, IList<String> words) {
     	Double counter = 0.0;
     	for(String word : words) {
-    		if(word.equals(target)) {
+    		if(word.equalsIgnoreCase(target)) {
     			counter++;
     		}
     	}
@@ -106,10 +116,14 @@ public class TfIdfAnalyzer {
     private IDictionary<URI, IDictionary<String, Double>> computeAllDocumentTfIdfVectors(ISet<Webpage> pages) {
         // Hint: this method should use the idfScores field and
         // call the computeTfScores(...) method.
-    	IDictionary<URI, IDictionary<String, Double>> finalVector = new ArrayDictionary<URI, IDictionary<String, Double>>();
+    	IDictionary<URI, IDictionary<String, Double>> finalVector = new ChainedHashDictionary<URI, IDictionary<String, Double>>();
     	for (Webpage page : pages) {
     		IList<String> list = page.getWords();
     		IDictionary<String, Double> scores = computeTfScores(list);
+    		for(KVPair<String, Double> pair : scores) {
+    			String key = pair.getKey();
+        		scores.put(key, pair.getValue() * idfScores.get(key));
+        	}
     		finalVector.put(page.getUri(), scores);
     		
     	}
@@ -123,7 +137,41 @@ public class TfIdfAnalyzer {
      * Precondition: the given uri must have been one of the uris within the list of
      *               webpages given to the constructor.
      */
+    
+    private Double norm(IDictionary<String, Double> vector) {
+    	double output = 0.0;
+    	for(KVPair<String, Double> pair : vector) {
+    		double val = pair.getValue();
+    		output += val * val;
+    	}
+    	return Math.sqrt(output);
+    }
+    
     public Double computeRelevance(IList<String> query, URI pageUri) {
+    	IDictionary<String, Double> docVector = documentTfIdfVectors.get(pageUri);
+    	IDictionary<String, Double> queryVector = new ChainedHashDictionary<>();
+    	for (String cur : query) {
+    		if(docVector.containsKey(cur)) {
+    			queryVector.put(cur, docVector.get(cur));
+    		} else {
+    			queryVector.put(cur, 0.0);
+    		}
+    	}
+    	
+    	double numerator = 0.0;
+		for(KVPair<String, Double> pair : queryVector) {
+			String key = pair.getKey();
+			if(docVector.containsKey(key)) {
+				numerator += (double)queryVector.get(key) * (double)docVector.get(key);
+			}
+		}
+    	double denominator = norm(docVector) * norm(queryVector);
+    	
+    	if(denominator != 0.0) {
+    		return (double) numerator / denominator;	
+    	} else {
+    		return 0.0;
+    	}
         // TODO: Replace this with actual, working code.
 
         // TODO: The pseudocode we gave you is not very efficient. When implementing,
@@ -133,6 +181,5 @@ public class TfIdfAnalyzer {
         //    Add a third field containing that information.
         //
         // 2. See if you can combine or merge one or more loops.
-        return 0.0;
     }
 }

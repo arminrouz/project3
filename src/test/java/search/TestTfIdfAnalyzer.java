@@ -3,6 +3,7 @@ package search;
 import datastructures.concrete.ChainedHashSet;
 import datastructures.concrete.DoubleLinkedList;
 import datastructures.concrete.KVPair;
+import datastructures.concrete.dictionaries.ArrayDictionary;
 import datastructures.concrete.dictionaries.ChainedHashDictionary;
 import datastructures.interfaces.IDictionary;
 import datastructures.interfaces.IList;
@@ -135,4 +136,82 @@ public class TestTfIdfAnalyzer extends BaseTest {
                 analyzer.computeRelevance(query, URI.create("http://example.com/fake-page-c.html")),
                 DELTA);
     }
+//    
+//    private IDictionary<String, Double> computeTfScores(IList<String> words) {
+//        IDictionary<String, Double> tfScores = new ArrayDictionary<String, Double>();
+//        for(String word : words) {
+//        	tfScores.put(word, countWord(word, words) / (double) words.size());
+//        }
+//        return tfScores;
+//    }
+//    private Double countWord(String target, IList<String> words) {
+//    	Double counter = 0.0;
+//    	for(String word : words) {
+//    		if(word.equalsIgnoreCase(target)) {
+//    			counter++;
+//    		}
+//    	}
+//    	return counter;
+//    }
+//    
+//    private IDictionary<String, Double> computeIdfScores(ISet<Webpage> pages) {
+//    	int numDocs = pages.size();
+//    	IDictionary<String, Double> idfScores = new ChainedHashDictionary<String, Double>();
+//    	for(Webpage page : pages) {
+//    		ISet<String> uniqueWords = new ChainedHashSet<String>();
+//    		for(String word : page.getWords()) {
+//    			uniqueWords.add(word);
+//    		}
+//    		for (String word : uniqueWords) {
+//    			
+//	    		
+//    			if(!idfScores.containsKey(word)) {
+//    				idfScores.put(word,  0.0);
+//    			}
+//    			double oldScore = idfScores.get(word);
+//    			idfScores.put(word, oldScore + 1.0);
+//	    		
+//    		}
+//    	}
+//
+//    	for(KVPair<String, Double> pair : idfScores) {
+//    		idfScores.put(pair.getKey(), Math.log((double) numDocs / pair.getValue()));
+//    	}
+//    	
+//    	return idfScores;
+//    }
+//    
+//    @Test(timeout=SECOND) 
+//    public void testComputeTfScores() {
+//    	IDictionary<String, Double> testDict = new ChainedHashDictionary<String, Double>();
+//    	IList<String> testList = new DoubleLinkedList<String>();
+//    	testList.add("Peter");
+//    	testList.add("is");
+//    	testList.add("cool");
+//    	testDict.put("Peter", 1.0 / 3.0);
+//    	testDict.put("is", 1.0 / 3.0);
+//    	testDict.put("cool", 1.0 / 3.0);
+//    	compareVectors(testDict, computeTfScores(testList));
+//    }
+//    
+//    @Test(timeout=SECOND) 
+//    public void testComputeIdfScores() {
+//    	ISet<Webpage> testSet = new ChainedHashSet<Webpage>();
+//    	Webpage documentA = new Webpage(
+//                URI.create("http://example.com/fake-page-a.html"),
+//                new DoubleLinkedList<>(),
+//                strToIList("the mouse played with the cat"),
+//                "Document A title",
+//                "Document A blurb");
+//    	testSet.add(documentA);
+//    	IDictionary<String, Double> testDict = new ChainedHashDictionary<String, Double>();
+//    	testDict.put("the", Math.log(1.0 / 1.0));
+//    	testDict.put("mouse", Math.log(1.0 / 1.0));
+//    	testDict.put("played", Math.log(1.0 / 1.0));
+//    	testDict.put("with", Math.log(1.0 / 1.0));
+//    	testDict.put("the", Math.log(1.0 / 1.0));
+//    	testDict.put("cat", Math.log(1.0 / 1.0));
+//    	compareVectors(testDict, computeIdfScores(testSet));
+//    }
+    
 }
