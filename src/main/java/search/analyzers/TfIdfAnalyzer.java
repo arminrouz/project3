@@ -21,8 +21,9 @@ import java.net.URI;
 public class TfIdfAnalyzer {
     // This field must contain the IDF score for every single word in all
     // the documents.
+	public static final Timer TIMER = new Timer();
     private IDictionary<String, Double> idfScores;
-
+    private IDictionary<URI, Double> normDocVector;
     // This field must contain the TF-IDF vector for each webpage you were given
     // in the constructor.
     //
@@ -41,6 +42,10 @@ public class TfIdfAnalyzer {
 
         this.idfScores = this.computeIdfScores(webpages);
         this.documentTfIdfVectors = this.computeAllDocumentTfIdfVectors(webpages);
+        this.normDocVector = new ChainedHashDictionary<URI, Double>();
+        for(KVPair<URI, IDictionary<String, Double>> pair : documentTfIdfVectors) {
+        	normDocVector.put(pair.getKey(), norm(pair.getValue()));
+        }
     }
 
     // Note: this method, strictly speaking, doesn't need to exist. However,
@@ -61,6 +66,8 @@ public class TfIdfAnalyzer {
      * in any documents to their IDF score.
      */
     private IDictionary<String, Double> computeIdfScores(ISet<Webpage> pages) {
+    	System.out.println("start compute IDF");
+    	TIMER.start();
     	int numDocs = pages.size();
     	IDictionary<String, Double> idfScores = new ChainedHashDictionary<String, Double>();
     	for(Webpage page : pages) {
@@ -83,7 +90,8 @@ public class TfIdfAnalyzer {
     	for(KVPair<String, Double> pair : idfScores) {
     		idfScores.put(pair.getKey(), Math.log((double) numDocs / pair.getValue()));
     	}
-    	
+    	System.out.println("compute IDF time = " + TIMER.stop());
+
     	return idfScores;
     }
 
@@ -148,14 +156,15 @@ public class TfIdfAnalyzer {
     }
     
     public Double computeRelevance(IList<String> query, URI pageUri) {
+    	System.out.println("start compute relevance");
+    	TIMER.start();
     	IDictionary<String, Double> docVector = documentTfIdfVectors.get(pageUri);
     	IDictionary<String, Double> queryVector = new ChainedHashDictionary<>();
-    	for (String cur : query) {
-    		if(docVector.containsKey(cur)) {
-    			queryVector.put(cur, docVector.get(cur));
-    		} else {
-    			queryVector.put(cur, 0.0);
-    		}
+    	IDictionary<String, Double> queryTfScores = computeTfScores(query);
+    	
+    	for(KVPair<String, Double> pair : queryTfScores) {
+			String key = pair.getKey();
+    		queryVector.put(key, pair.getValue() * idfScores.get(key));
     	}
     	
     	double numerator = 0.0;
@@ -165,13 +174,15 @@ public class TfIdfAnalyzer {
 				numerator += (double)queryVector.get(key) * (double)docVector.get(key);
 			}
 		}
-    	double denominator = norm(docVector) * norm(queryVector);
-    	
+    	double denominator = normDocVector.get(pageUri) * norm(queryVector);
+    	System.out.println("compute relevance time = " + TIMER.stop());
     	if(denominator != 0.0) {
+    		
     		return (double) numerator / denominator;	
     	} else {
     		return 0.0;
     	}
+    	
         // TODO: Replace this with actual, working code.
 
         // TODO: The pseudocode we gave you is not very efficient. When implementing,
@@ -181,5 +192,17 @@ public class TfIdfAnalyzer {
         //    Add a third field containing that information.
         //
         // 2. See if you can combine or merge one or more loops.
+    }
+    
+    public static class Timer {
+    	private long time;
+    	
+    	public void start() {
+    		time = System.currentTimeMillis();
+    	}
+    	
+    	public long stop() {
+    		return System.currentTimeMillis() - time;
+    	}
     }
 }
