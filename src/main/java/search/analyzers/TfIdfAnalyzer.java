@@ -31,17 +31,11 @@ public class TfIdfAnalyzer {
     // Feel free to add extra fields and helper methods.
 
     public TfIdfAnalyzer(ISet<Webpage> webpages) {
-        // Implementation note: We have commented these method calls out so your
-        // search engine doesn't immediately crash when you try running it for the
-        // first time.
-        //
-        // You should uncomment these lines when you're ready to begin working
-        // on this class.
 
         this.idfScores = this.computeIdfScores(webpages);
         this.documentTfIdfVectors = this.computeAllDocumentTfIdfVectors(webpages);
         this.normDocVector = new ChainedHashDictionary<URI, Double>();
-        for(KVPair<URI, IDictionary<String, Double>> pair : documentTfIdfVectors) {
+        for (KVPair<URI, IDictionary<String, Double>> pair : documentTfIdfVectors) {
         	normDocVector.put(pair.getKey(), norm(pair.getValue()));
         }
     }
@@ -65,11 +59,9 @@ public class TfIdfAnalyzer {
      * in any documents to their IDF score.
      */
     private IDictionary<String, Double> computeIdfScores(ISet<Webpage> pages) {
-//    	System.out.println("start compute IDF");
-//    	TIMER.start();
     	int numDocs = pages.size();
-    	IDictionary<String, Double> idfScores = new ChainedHashDictionary<String, Double>();
-    	for(Webpage page : pages) {
+    	idfScores = new ChainedHashDictionary<String, Double>();
+    	for (Webpage page : pages) {
     		ISet<String> uniqueWords = new ChainedHashSet<String>();
     		for(String word : page.getWords()) {
     			uniqueWords.add(word);
@@ -77,7 +69,7 @@ public class TfIdfAnalyzer {
     		for (String word : uniqueWords) {
     			
 	    		
-    			if(!idfScores.containsKey(word)) {
+    			if (!idfScores.containsKey(word)) {
     				idfScores.put(word,  0.0);
     			}
     			double oldScore = idfScores.get(word);
@@ -86,10 +78,9 @@ public class TfIdfAnalyzer {
     		}
     	}
 
-    	for(KVPair<String, Double> pair : idfScores) {
+    	for (KVPair<String, Double> pair : idfScores) {
     		idfScores.put(pair.getKey(), Math.log((double) numDocs / pair.getValue()));
     	}
-//    	System.out.println("compute IDF time = " + TIMER.stop());
 
     	return idfScores;
     }
@@ -101,29 +92,22 @@ public class TfIdfAnalyzer {
      * We are treating the list of words as if it were a document.
      */
     private IDictionary<String, Double> computeTfScores(IList<String> words) {
-    	//System.out.println("TFStart");
-    	//TIMER.start();
+
         IDictionary<String, Double> tfScores = new ChainedHashDictionary<String, Double>();
         IDictionary<String, Integer> uniqueWords = new ChainedHashDictionary<String, Integer>();
         for (String word : words) {
-        	if(!uniqueWords.containsKey(word)) {
+        	if (!uniqueWords.containsKey(word)) {
         		uniqueWords.put(word, 1);
         	} else {
         		uniqueWords.put(word, uniqueWords.get(word) + 1);
         	}
-        	// at this point, increment a counter
-        	// make sure you consider edge case of first time encountering word
         }
-//        System.out.print("TF Start:");
-//        TIMER.start();
-        for(KVPair<String, Integer> pair : uniqueWords) {
-        	//System.out.println("Loop Start look ");
-        	//IMER.start();
+
+
+        for (KVPair<String, Integer> pair : uniqueWords) {
         	tfScores.put(pair.getKey(), pair.getValue() / (double) words.size());
-        	//System.out.println("Stop: " + TIMER.stop());
         }
-//        TIMER.stop();
-        //System.out.println("TFSTOP: " + TIMER.stop());
+
         return tfScores;
     }
 
@@ -131,38 +115,27 @@ public class TfIdfAnalyzer {
      * See spec for more details on what this method should do.
      */
     private IDictionary<URI, IDictionary<String, Double>> computeAllDocumentTfIdfVectors(ISet<Webpage> pages) {
-        // Hint: this method should use the idfScores field and
-        // call the computeTfScores(...) method
-    	//System.out.println("Start compute all time");
-    	IDictionary<URI, IDictionary<String, Double>> finalVector = new ChainedHashDictionary<URI, IDictionary<String, Double>>();
+    	IDictionary<URI, IDictionary<String, Double>> finalVector = 
+    			new ChainedHashDictionary<URI, IDictionary<String, Double>>();
     	for (Webpage page : pages) {
     		IList<String> list = page.getWords();
-    		//System.out.println("start time: ");
-    		//TIMER.start();
     		IDictionary<String, Double> scores = computeTfScores(list);
-    		//System.out.println(TIMER.stop());
-    		for(KVPair<String, Double> pair : scores) {
+
+    		for (KVPair<String, Double> pair : scores) {
     			String key = pair.getKey();
         		scores.put(key, pair.getValue() * idfScores.get(key));
         	}
     		finalVector.put(page.getUri(), scores);
     		
     	}
-    	//System.out.println("End document time" + TIMER.stop());
         return finalVector;
     }
 
-    /**
-     * Returns the cosine similarity between the TF-IDF vector for the given query and the
-     * URI's document.
-     *
-     * Precondition: the given uri must have been one of the uris within the list of
-     *               webpages given to the constructor.
-     */
+
     
     private Double norm(IDictionary<String, Double> vector) {
     	double output = 0.0;
-    	for(KVPair<String, Double> pair : vector) {
+    	for (KVPair<String, Double> pair : vector) {
     		double val = pair.getValue();
     		output += val * val;
     	}
@@ -176,36 +149,27 @@ public class TfIdfAnalyzer {
     	IDictionary<String, Double> queryVector = new ChainedHashDictionary<>();
     	IDictionary<String, Double> queryTfScores = computeTfScores(query);
     	
-    	for(KVPair<String, Double> pair : queryTfScores) {
+    	for (KVPair<String, Double> pair : queryTfScores) {
 			String key = pair.getKey();
     		queryVector.put(key, pair.getValue() * idfScores.get(key));
     	}
     	
     	double numerator = 0.0;
-		for(KVPair<String, Double> pair : queryVector) {
+		for (KVPair<String, Double> pair : queryVector) {
 			String key = pair.getKey();
-			if(docVector.containsKey(key)) {
-				numerator += (double)queryVector.get(key) * (double)docVector.get(key);
+			if (docVector.containsKey(key)) {
+				numerator += (double) queryVector.get(key) * (double) docVector.get(key);
 			}
 		}
     	double denominator = normDocVector.get(pageUri) * norm(queryVector);
     	System.out.println("compute relevance time = " + TIMER.stop());
-    	if(denominator != 0.0) {
+    	if (denominator != 0.0) {
     		
     		return (double) numerator / denominator;	
     	} else {
     		return 0.0;
     	}
     	
-        // TODO: Replace this with actual, working code.
-
-        // TODO: The pseudocode we gave you is not very efficient. When implementing,
-        // this smethod, you should:
-        //
-        // 1. Figure out what information can be precomputed in your constructor.
-        //    Add a third field containing that information.
-        //
-        // 2. See if you can combine or merge one or more loops.
     }
     
     public static class Timer {
