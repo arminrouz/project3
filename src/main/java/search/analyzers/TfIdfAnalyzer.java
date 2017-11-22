@@ -19,7 +19,7 @@ import java.net.URI;
 public class TfIdfAnalyzer {
     // This field must contain the IDF score for every single word in all
     // the documents.
-	public static final Timer TIMER = new Timer();
+//	public static final Timer TIMER = new Timer();
     private IDictionary<String, Double> idfScores;
     private IDictionary<URI, Double> normDocVector;
     // This field must contain the TF-IDF vector for each webpage you were given
@@ -67,14 +67,11 @@ public class TfIdfAnalyzer {
     			uniqueWords.add(word);
     		}
     		for (String word : uniqueWords) {
-    			
-	    		
     			if (!idfScores.containsKey(word)) {
     				idfScores.put(word,  0.0);
     			}
     			double oldScore = idfScores.get(word);
     			idfScores.put(word, oldScore + 1.0);
-	    		
     		}
     	}
 
@@ -102,12 +99,9 @@ public class TfIdfAnalyzer {
         		uniqueWords.put(word, uniqueWords.get(word) + 1);
         	}
         }
-
-
         for (KVPair<String, Integer> pair : uniqueWords) {
         	tfScores.put(pair.getKey(), pair.getValue() / (double) words.size());
         }
-
         return tfScores;
     }
 
@@ -131,8 +125,6 @@ public class TfIdfAnalyzer {
         return finalVector;
     }
 
-
-    
     private Double norm(IDictionary<String, Double> vector) {
     	double output = 0.0;
     	for (KVPair<String, Double> pair : vector) {
@@ -162,7 +154,6 @@ public class TfIdfAnalyzer {
     	double denominator = normDocVector.get(pageUri) * norm(queryVector);
     	
     	if (denominator != 0.0) {
-    		
     		return (double) numerator / denominator;	
     	} else {
     		return 0.0;
@@ -170,15 +161,15 @@ public class TfIdfAnalyzer {
     	
     }
     
-    public static class Timer {
-    	private long time;
-    	
-    	public void start() {
-    		time = System.currentTimeMillis();
-    	}
-    	
-    	public long stop() {
-    		return System.currentTimeMillis() - time;
-    	}
-    }
+//    public static class Timer {
+//    	private long time;
+//    	
+//    	public void start() {
+//    		time = System.currentTimeMillis();
+//    	}
+//    	
+//    	public long stop() {
+//    		return System.currentTimeMillis() - time;
+//    	}
+//    }
 }
