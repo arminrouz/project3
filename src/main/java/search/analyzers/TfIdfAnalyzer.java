@@ -143,8 +143,6 @@ public class TfIdfAnalyzer {
     }
     
     public Double computeRelevance(IList<String> query, URI pageUri) {
-    	System.out.println("start compute relevance");
-    	TIMER.start();
     	IDictionary<String, Double> docVector = documentTfIdfVectors.get(pageUri);
     	IDictionary<String, Double> queryVector = new ChainedHashDictionary<>();
     	IDictionary<String, Double> queryTfScores = computeTfScores(query);
@@ -162,7 +160,7 @@ public class TfIdfAnalyzer {
 			}
 		}
     	double denominator = normDocVector.get(pageUri) * norm(queryVector);
-    	System.out.println("compute relevance time = " + TIMER.stop());
+    	
     	if (denominator != 0.0) {
     		
     		return (double) numerator / denominator;	
