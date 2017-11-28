@@ -65,7 +65,12 @@ public class PageRankAnalyzer {
         	ISet<URI> uriSet = new ChainedHashSet<URI>();
         	for (URI uri : page.getLinks()) {
         		if (!uri.equals(page.getUri()) && !uriSet.contains(uri)) { //added this
-        			uriSet.add(uri);
+        			for (Webpage page2 : webpages) {
+        				if (page2.getUri().equals(uri)) {
+                			uriSet.add(uri);
+                			break;
+        				}
+        			}
         		}
         	}
         	init.put(page.getUri(), uriSet);
@@ -91,41 +96,85 @@ public class PageRankAnalyzer {
                                                    double epsilon) {
         // Step 1: The initialize step should go here
     	IDictionary<URI, Double> initRank = new ArrayDictionary<URI, Double>();
-    	 // Step 2: The update step should go here
     	for (KVPair<URI, ISet<URI>> pair : graph) {
-    		initRank.put(pair.getKey(), 1 / (double) graph.size());
+    		initRank.put(pair.getKey(), 1.0 / (double) graph.size());
     	}
+    	 // Step 2: The update step should go here
     	IDictionary<URI, Double> finalRank = new ArrayDictionary<URI, Double>();
-    	for (KVPair<URI, Double> pair : initRank) {
+
+    	for (KVPair<URI, ISet<URI>> pair : graph) {
     		finalRank.put(pair.getKey(), 0.0);
     	}
     	
         for (int i = 0; i < limit; i++) {
-        	int checker = 0;
-        	//boolean check = true;
-        	for (KVPair<URI, ISet<URI>> pair : graph) {
-        		int size = pair.getValue().size();
-        		if (size == 0) {
-        			size = graph.size();
+        	boolean check = true;
+    		IDictionary<URI, Double> intermediate = new ArrayDictionary<URI, Double>();
+
+        	for (KVPair<URI, ISet<URI>> pair : graph) { // FOR EACH PAGE (VERTEX) IN THE GRAPH
+        		double newRank = 0;
+        		for (URI uri : pair.getValue()) { // FOR EACH THING THAT LINKS TO IT
+    				double size = (double) graph.get(uri).size(); // NUMBER IT LINKS TO
+            		if(size == 0.0) { // IF NO OUTGOING LINKS
+            			size = (double) graph.size(); // THEN USE GRAPH SIZE
+            		}
+            		if(i == 0) { // IF FIRST ITERATION, USE VALUES IN INITIAL RANK DICT
+            			newRank += decay * initRank.get(uri) / size;
+            		} else { // ELSE USE LAST UPDATED VALUE
+            			newRank += decay * finalRank.get(uri) / size;
+
+            		}
+    			}
+    			newRank += (1.0 - decay) / (double) graph.size(); // DECAY FACTOR
+        		if(check == true && Math.abs(finalRank.get(pair.getKey()) - newRank) > epsilon) {
+        			check = false;
         		}
-        		double oldRank = initRank.get(pair.getKey());
-        		double newRank = oldRank + decay * (oldRank / size) + (1 - decay / graph.size());
-        		
-        		if (/*check == true &&*/ Math.abs(oldRank - newRank) > epsilon) {
-        			checker++;
-        			//check = false;
-        		}
-        		finalRank.put(pair.getKey(), newRank);
-        		
+        		intermediate.put(pair.getKey(), newRank);
         	}
-           
-        	if(/*check == true*/ checker == 0) {
+        	finalRank = intermediate;
+        	if(check == true) {
         		return finalRank;
-        	} 
-            // Step 3: the convergence step should go here.
+        	}
+        	// ADD A CHECK FOR IF ONE OF THE WEBPAGES DOESNT HAVE OUTGOING LINKS, DIVIDE BY N
+        	// INSTEAD OF NUMBER OF OUTGOING LINKS.
+        	
+        	// HERE ADD A CHECK FOR IF THE DIFFERENCE BETWEEN PREVIOUS RANK AND THE NEW RANK ARE 
+        	// GREATER THAN EPSILON
+        	
+//        	int checker = 0;
+//        	boolean check = true;
+//        	for (KVPair<URI, ISet<URI>> pair : graph) {
+//        		double size = pair.getValue().size();
+//        		if (size == 0.0) {
+//        			size = (double) graph.size();
+//        		}
+//        		double oldRank;
+//        		double newRank;
+//        		if (i == 0) {
+//        			oldRank = initRank.get(pair.getKey());
+//        		} else {
+//        			oldRank = finalRank.get(pair.getKey());
+//        		}
+//        		newRank = oldRank + decay * (oldRank / size) + ((1.0 - decay) / (double) graph.size());
+//        		if (i < 5) {
+//            		System.out.println(newRank);
+//
+//        		}
+//        		if (check == true && Math.abs(oldRank - newRank) > epsilon) {
+////        			checker++;
+//        			check = false;
+//        		}
+//        		finalRank.put(pair.getKey(), newRank);
+//        		
+//        	}
+        	// Step 3: the convergence step should go here.
             // Return early if we've converged.
+//        	if(check == true /*checker == 0*/) {
+//        		return finalRank;
+//        	} 
+//            
         }
-        return initRank;
+//        return finalRank;
+    return finalRank;
     }
 
     /**
