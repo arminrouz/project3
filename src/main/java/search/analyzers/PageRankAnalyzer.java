@@ -106,51 +106,106 @@ public class PageRankAnalyzer {
     	for (KVPair<URI, ISet<URI>> pair : graph) {
     		zeros.put(pair.getKey(), 0.0);
     	}
-    	updated = zeros;
+    	updated = initRank; //changed this 
     	
-    	
-    	IDictionary<URI, Double> intermediate;
-    	for (int i = 0; i < limit; i++) {
-    		intermediate = zeros;
+    	for (int i = 0; i < limit; i++) { //armin 
+    		IDictionary<URI, Double> intermediate = zeros;
     		for (KVPair<URI, ISet<URI>> pair : graph) {
-    			URI uri = pair.getKey();
-    			ISet<URI> linksTo = pair.getValue();
-    			if (linksTo.isEmpty()) {
-    				for(KVPair<URI, Double> pair2 : intermediate) {
-    					URI nextUri = pair2.getKey();
-    					Double oldVal = pair2.getValue();
-    					intermediate.put(nextUri, oldVal + (decay * oldVal / (double) graph.size()));
-    				}
-    			}
-    			for (URI link : linksTo) {
-    				double val;
-    				if(i == 0) {
-    					val = initRank.get(link);
-    				} else {
-    					val = updated.get(link);
-    				}
-    				if(graph.get(link).size() > 0) {
-    					intermediate.put(uri, intermediate.get(uri) + (decay * val / (double) graph.get(link).size()));
-    				}
-    			}
-    			for (KVPair<URI, Double> pair3 : intermediate) {
-    				double oldValue = pair3.getValue();
-    				double newVal = oldValue + ((1 - decay) / (double) graph.size());
-    				intermediate.put(pair3.getKey(), newVal);
-    			}
+    			URI link = pair.getKey();
+    			ISet<URI> theLinks = pair.getValue();
+    			double value = updated.get(link);
+    			if (theLinks.isEmpty()) {
+    				for (KVPair<URI, Double> pair2 : intermediate) {
+    					intermediate.put(pair2.getKey(), pair2.getValue() + 
+    							decay * (value / graph.size()));
+    				} 
+    			} else {
+    				double newRank = 0.0;
+					for (URI theUri : theLinks) {
+						double oldRank = updated.get(theUri);
+						double oldVal = oldRank * decay / graph.get(theUri).size();
+						newRank = newRank + oldVal;
+					}
+					//newRank = newRank + (1 - decay) / graph.size();
+					intermediate.put(link, newRank);
     		}
-    		boolean check = true;
-    		for (KVPair<URI, Double> finalPair : updated) {
-    			URI uri2 = finalPair.getKey();
-    			if(check == true && Math.abs(updated.get(uri2) - intermediate.get(uri2)) >= epsilon) {
-    				check = false;
+    
+    			//double newRank = initRank.get(link) / 
+    			
+    		}
+
+    		int counter = 0;
+    		for (KVPair<URI, Double> finalChecker : intermediate) {
+    			intermediate.put(finalChecker.getKey(), finalChecker.getValue() + (1 - decay) / graph.size());
+    			if (Math.abs(finalChecker.getValue() - updated.get(finalChecker.getKey())) >= epsilon) {
+    				counter++;
     			}
+    		} //return intermediate, else keep going.
+    		
+    		if (counter > 0) {
+    			return intermediate;
     		}
     		updated = intermediate;
-    		if (check == true) {
-    			return updated;
-    		}
     	}
+    	
+    	
+//    	IDictionary<URI, Double> intermediate;
+//    	for (int i = 0; i < limit; i++) {
+//    		intermediate = zeros;
+//    		for (KVPair<URI, ISet<URI>> pair : graph) {
+//    			URI uri = pair.getKey();
+//    			ISet<URI> linksTo = pair.getValue();
+//    			if (linksTo.isEmpty()) {
+//    				for(KVPair<URI, Double> pair2 : intermediate) {
+//    					URI nextUri = pair2.getKey();
+//    					Double oldVal = pair2.getValue();
+    	
+//    					intermediate.put(nextUri, oldVal + (decay * oldVal / (double) graph.size()));
+//    				}
+//    			}
+//    			for (URI link : linksTo) {
+//    				double val;
+//    				if(i == 0) {
+//    					val = initRank.get(link);
+//    				} else {
+//    					val = updated.get(link);
+//    				}
+//    				if(graph.get(link).size() > 0) {
+//    					intermediate.put(uri, intermediate.get(uri) + (decay * val / (double) graph.get(link).size()));
+//    				}
+//    			}
+//    			for (KVPair<URI, Double> pair3 : intermediate) {
+//    				double oldValue = pair3.getValue();
+//    				double newVal = oldValue + ((1 - decay) / (double) graph.size());
+//    				intermediate.put(pair3.getKey(), newVal);
+//    			}
+//    		}
+//    		boolean check = true;
+//    		for (KVPair<URI, Double> finalPair : updated) {
+//    			URI uri2 = finalPair.getKey();
+//    			if(check == true && Math.abs(updated.get(uri2) - intermediate.get(uri2)) >= epsilon) {
+//    				check = false;
+//    			}
+//    		}
+//    		updated = intermediate;
+//    		if (check == true) {
+//    			return updated;
+//    		}
+//    	}
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
 //    	
 //        for (int i = 0; i < limit; i++) {
 //        	boolean check = true;
