@@ -101,51 +101,71 @@ public class PageRankAnalyzer {
     	}
     	 // Step 2: The update step should go here
     	IDictionary<URI, Double> updated = new ArrayDictionary<URI, Double>();
-    	IDictionary<URI, Double> zeros = new ArrayDictionary<URI, Double>();
+//    	IDictionary<URI, Double> zeros = new ArrayDictionary<URI, Double>();
 
-    	for (KVPair<URI, ISet<URI>> pair : graph) {
-    		zeros.put(pair.getKey(), 0.0);
-    	}
+//    	for (KVPair<URI, ISet<URI>> pair : graph) {
+//    		zeros.put(pair.getKey(), 0.0);
+//    	}
     	updated = initRank; //changed this 
     	
     	for (int i = 0; i < limit; i++) { //armin 
-    		IDictionary<URI, Double> intermediate = zeros;
+    		System.out.println(i);
+    		IDictionary<URI, Double> intermediate = new ArrayDictionary<URI, Double>();;
     		for (KVPair<URI, ISet<URI>> pair : graph) {
-    			URI link = pair.getKey();
+        		intermediate.put(pair.getKey(), 0.0);
+    	    }
+    		for (KVPair<URI, ISet<URI>> pair : graph) {
+    			
+    			URI cur = pair.getKey();
+//        		System.out.println(zeros.get(cur));
+
     			ISet<URI> theLinks = pair.getValue();
-    			double value = updated.get(link);
+    			double value = updated.get(cur);
     			if (theLinks.isEmpty()) {
     				for (KVPair<URI, Double> pair2 : intermediate) {
     					intermediate.put(pair2.getKey(), pair2.getValue() + 
     							decay * (value / graph.size()));
     				} 
     			} else {
-    				double newRank = 0.0;
+//    				double newRank = 0.0;
 					for (URI theUri : theLinks) {
-						double oldRank = updated.get(theUri);
-						double oldVal = oldRank * decay / graph.get(theUri).size();
-						newRank = newRank + oldVal;
+						if(theLinks.size() > 0) { // added this
+							double oldRank = updated.get(cur);
+							double newRank = intermediate.get(theUri) + (oldRank * decay / (double) theLinks.size());
+							intermediate.put(theUri, newRank);
+//							double oldVal = oldRank * decay / (double) graph.get(theUri).size();
+//							newRank = newRank + oldVal;
+						}
 					}
 					//newRank = newRank + (1 - decay) / graph.size();
-					intermediate.put(link, newRank);
-    		}
+//					intermediate.put(cur, intermediate.get(cur) + newRank);
+    			}
     
     			//double newRank = initRank.get(link) / 
     			
     		}
 
-    		int counter = 0;
     		for (KVPair<URI, Double> finalChecker : intermediate) {
-    			intermediate.put(finalChecker.getKey(), finalChecker.getValue() + (1 - decay) / graph.size());
-    			if (Math.abs(finalChecker.getValue() - updated.get(finalChecker.getKey())) >= epsilon) {
+    			Double newVal = finalChecker.getValue() + (1 - decay) / graph.size();
+//    			if (Math.abs(updated.get(finalChecker.getKey()) - newVal) < epsilon) {
+//    				counter++;
+//    			}
+    			intermediate.put(finalChecker.getKey(), newVal);
+    			
+    		} //return intermediate, else keep going.
+    		int counter = 0;
+    		for(KVPair<URI, Double> pair : intermediate) {
+    			URI uri = pair.getKey();
+    			Double val = pair.getValue();
+    			if (Math.abs(updated.get(uri) - val) < epsilon) {
     				counter++;
     			}
-    		} //return intermediate, else keep going.
-    		
-    		if (counter > 0) {
+    			updated.put(uri, val);
+    		}
+    		if (counter == intermediate.size()) {
     			return intermediate;
     		}
-    		updated = intermediate;
+//    		updated = intermediate;
     	}
     	
     	
