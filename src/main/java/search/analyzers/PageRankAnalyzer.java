@@ -2,7 +2,7 @@ package search.analyzers;
 
 import datastructures.concrete.ChainedHashSet;
 import datastructures.concrete.KVPair;
-import datastructures.concrete.dictionaries.ArrayDictionary;
+import datastructures.concrete.dictionaries.ChainedHashDictionary;
 import datastructures.interfaces.IDictionary;
 import datastructures.interfaces.ISet;
 import search.models.Webpage;
@@ -59,17 +59,16 @@ public class PageRankAnalyzer {
      * entirely "self-contained".
      */
     private IDictionary<URI, ISet<URI>> makeGraph(ISet<Webpage> webpages) {
-        IDictionary<URI, ISet<URI>> init = new ArrayDictionary<URI,ISet<URI>>();
+        IDictionary<URI, ISet<URI>> init = new ChainedHashDictionary<URI,ISet<URI>>();
+        System.out.println("making graph");
+        for (Webpage page : webpages) {
+        	init.put(page.getUri(), null);
+        }
         for (Webpage page : webpages) {
         	ISet<URI> uriSet = new ChainedHashSet<URI>();
         	for (URI uri : page.getLinks()) {
-        		if (!uri.equals(page.getUri()) && !uriSet.contains(uri)) { //added this
-        			for (Webpage page2 : webpages) {
-        				if (page2.getUri().equals(uri)) {
-                			uriSet.add(uri);
-                			break;
-        				}
-        			}
+        		if (!uri.equals(page.getUri()) && !uriSet.contains(uri) && init.containsKey(uri)) { //added this
+        			uriSet.add(uri);
         		}
         	}
         	init.put(page.getUri(), uriSet);
@@ -94,18 +93,17 @@ public class PageRankAnalyzer {
                                                    int limit,
                                                    double epsilon) {
         // Step 1: The initialize step should go here
-    	IDictionary<URI, Double> initRank = new ArrayDictionary<URI, Double>();
+    	IDictionary<URI, Double> initRank = new ChainedHashDictionary<URI, Double>();
     	for (KVPair<URI, ISet<URI>> pair : graph) {
     		initRank.put(pair.getKey(), 1.0 / (double) graph.size());
     	}
     	 // Step 2: The update step should go here
-    	IDictionary<URI, Double> updated = new ArrayDictionary<URI, Double>();
+    	IDictionary<URI, Double> updated = new ChainedHashDictionary<URI, Double>();
 
     	updated = initRank; //changed this 
     	
     	for (int i = 0; i < limit; i++) { //armin 
-    		System.out.println(i);
-    		IDictionary<URI, Double> intermediate = new ArrayDictionary<URI, Double>();;
+    		IDictionary<URI, Double> intermediate = new ChainedHashDictionary<URI, Double>();;
     		for (KVPair<URI, ISet<URI>> pair : graph) {
         		intermediate.put(pair.getKey(), 0.0);
     	    }
@@ -129,25 +127,22 @@ public class PageRankAnalyzer {
     			}    			
     		}
 
-    		for (KVPair<URI, Double> finalChecker : intermediate) {
-    			Double newVal = finalChecker.getValue() + (1 - decay) / graph.size();
-    			intermediate.put(finalChecker.getKey(), newVal);
-    			
-    		} //return intermediate, else keep going.
     		int counter = 0;
     		for(KVPair<URI, Double> pair : intermediate) {
+    			
     			URI uri = pair.getKey();
-    			Double val = pair.getValue();
-    			if (Math.abs(updated.get(uri) - val) < epsilon) {
+    			double val = pair.getValue();
+    			double newVal = val + (1 - decay) / graph.size();
+    			if (Math.abs(updated.get(uri) - newVal) < epsilon) {
     				counter++;
     			}
-    			updated.put(uri, val);
+    			updated.put(uri, newVal);
     		}
     		if (counter == intermediate.size()) {
-    			return intermediate;
+    			return updated;
     		}
     	}
-    return updated;
+    	return updated;
     }
 
     /**

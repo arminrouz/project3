@@ -141,7 +141,13 @@ public class TfIdfAnalyzer {
     	
     	for (KVPair<String, Double> pair : queryTfScores) {
 			String key = pair.getKey();
-    		queryVector.put(key, pair.getValue() * idfScores.get(key));
+			
+			if(key != null && idfScores.containsKey(key)) {
+				queryVector.put(key, pair.getValue() * idfScores.get(key));
+			} else {
+				queryVector.put(key, 0.0);
+
+			}
     	}
     	
     	double numerator = 0.0;
