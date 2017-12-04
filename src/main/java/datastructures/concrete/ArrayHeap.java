@@ -1,11 +1,7 @@
 package datastructures.concrete;
 
-import datastructures.interfaces.IList;
 import datastructures.interfaces.IPriorityQueue;
-import misc.exceptions.EmptyContainerException;
-import misc.exceptions.NotYetImplementedException;
-
-import java.util.Arrays;
+import java.util.NoSuchElementException;
 
 /**
  * See IPriorityQueue for details on what each method must do.
@@ -18,14 +14,14 @@ public class ArrayHeap<T extends Comparable<T>> implements IPriorityQueue<T> {
     // You may NOT rename this field: we will be inspecting it within
     // our private tests.
     private T[] heap;
-    private int size; 
+    private int sizeUsed; 
     int fullSize; 
 
     // Feel free to add more fields and constants.
 
     public ArrayHeap() {
     	heap = makeArrayOfT(5);
-    	size = 0;
+    	sizeUsed = 0;
     	fullSize = 5; 
     }
 
@@ -48,11 +44,9 @@ public class ArrayHeap<T extends Comparable<T>> implements IPriorityQueue<T> {
     
 
     private void resize() {
-//    	height++;
-//    	T[] newHeap = makeArrayOfT(size + (int) Math.pow(4, height));
-    	T[] newHeap = makeArrayOfT(size * 2);
+    	T[] newHeap = makeArrayOfT(sizeUsed * 2);
     	fullSize = newHeap.length;
-    	for (int i = 0; i < size; i++) {
+    	for (int i = 0; i < sizeUsed; i++) {
     		newHeap[i] = heap[i];
     	}
     	heap = newHeap;
@@ -60,11 +54,14 @@ public class ArrayHeap<T extends Comparable<T>> implements IPriorityQueue<T> {
 
     @Override
     public T removeMin() {
+    	if(sizeUsed == 0) {
+    		throw new NoSuchElementException();
+    	}
     	T temp = heap[0];
-    	T lastVal = heap[size - 1];
+    	T lastVal = heap[sizeUsed - 1];
     	heap[0] = lastVal; 
-    	heap[size - 1] = null;
-    	size--;
+    	heap[sizeUsed - 1] = null;
+    	sizeUsed--;
 
     	percolateDown(0);
     	return temp;
@@ -84,7 +81,7 @@ public class ArrayHeap<T extends Comparable<T>> implements IPriorityQueue<T> {
     	int child;
     	for (int i = 1; i < 5; i++) {
     		child = (4 * index) + i;
-    		if (child < size && heap[child].compareTo(heap[smallest]) < 0) {
+    		if (child < sizeUsed && heap[child].compareTo(heap[smallest]) < 0) {
     			smallest = child;
     		}
     	}
@@ -103,19 +100,22 @@ public class ArrayHeap<T extends Comparable<T>> implements IPriorityQueue<T> {
 
     @Override
     public void insert(T item) {
-    	if (size + 1 > fullSize) {
+    	if(item == null) {
+    		throw new IllegalArgumentException();
+    	}
+    	if (sizeUsed + 1 > fullSize) {
     		resize();
     	}
-    	heap[size] = item;
-    	size++; 
+    	heap[sizeUsed] = item;
+    	sizeUsed++; 
 
-    	if (size > 1) {
-    		percolateUp(size - 1);
+    	if (sizeUsed > 1) {
+    		percolateUp(sizeUsed - 1);
     	}
     }
     
     @Override
     public int size() {
-    	return size;
+    	return sizeUsed;
     }
 }

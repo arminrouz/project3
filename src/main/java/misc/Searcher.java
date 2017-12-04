@@ -5,7 +5,7 @@ import java.util.NoSuchElementException;
 import datastructures.concrete.ArrayHeap;
 import datastructures.concrete.DoubleLinkedList;
 import datastructures.interfaces.IList;
-import misc.exceptions.NotYetImplementedException;
+import datastructures.interfaces.IPriorityQueue;
 
 public class Searcher {
     /**
@@ -37,7 +37,7 @@ public class Searcher {
     		throw new IllegalArgumentException();
     	}
     	
-    	ArrayHeap<T> heap = new ArrayHeap<T>();
+    	IPriorityQueue<T> heap = new ArrayHeap<T>();
 		int counter = 0; 
 		for (T value : input) {
 			if (counter < k) {

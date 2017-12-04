@@ -5,11 +5,15 @@ import datastructures.concrete.DoubleLinkedList;
 import datastructures.interfaces.IList;
 import misc.Searcher;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.util.NoSuchElementException;
+import java.util.Random;
 /**
  * See spec for details on what kinds of tests this class should include.
  */
-import java.util.*;
 public class TestTopKSortFunctionality extends BaseTest {
     @Test(timeout=SECOND)
     public void testSimpleUsage() {
@@ -32,7 +36,7 @@ public class TestTopKSortFunctionality extends BaseTest {
     		IList<Integer> top = Searcher.topKSort(1, list);
     		fail("Expected NoSuchElementException");
     	} catch (NoSuchElementException ex){
-    		
+    		assertTrue(list.isEmpty());
     	}
     }
     

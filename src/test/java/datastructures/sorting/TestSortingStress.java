@@ -8,8 +8,11 @@ import datastructures.concrete.ArrayHeap;
 import datastructures.concrete.DoubleLinkedList;
 import datastructures.interfaces.IList;
 import datastructures.interfaces.IPriorityQueue;
-import static org.junit.Assert.assertTrue;
-import java.util.*; 
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Random;
 
 /**
  * See spec for details on what kinds of tests this class should include.
